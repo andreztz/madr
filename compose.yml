@@ -1,0 +1,24 @@
+services:
+  madr_database:
+    image: postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_DB: madr_db
+      POSTGRES_PASSWORD: secret
+    ports:
+      - "5432:5432"
+
+  madr_app:
+    image: madr_image
+    entrypoint: ./entrypoint.sh
+    ports:
+      - "8000:8000"
+    build: .
+    depends_on:
+      - madr_database
+    environment:
+      DATABASE_URL: postgresql+psycopg://admin:secret@madr_database:5432/madr_db
+volumes:
+  pgdata:
